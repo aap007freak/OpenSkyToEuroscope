@@ -29,5 +29,7 @@ If you want to edit/extend the source code, you'll have to add the Opensky API v
  * The Opensky team and contributors.
  * Gergely Csernak and contributors for Euroscope.
  * Callum Rid (the source code is partially inspired by [his work](https://github.com/CallumRidd/SBS2FSDproxy/blob/master/SBS2FSDproxy/SBS2FSD.py)).
+ * Norris Ng for the [FSD documentation](https://github.com/norrisng/fsd-doc).
+
  * The guys over at ADSBradar.ru. They still host the SBS2FSDProxy code, which made decompiling a lot easier.
 
