@@ -1,0 +1,9 @@
+MANIFEST.in
+opensky_api.py
+setup.cfg
+setup.py
+opensky_api.egg-info/PKG-INFO
+opensky_api.egg-info/SOURCES.txt
+opensky_api.egg-info/dependency_links.txt
+opensky_api.egg-info/requires.txt
+opensky_api.egg-info/top_level.txt
