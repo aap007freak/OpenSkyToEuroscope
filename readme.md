@@ -1,5 +1,5 @@
 # Real life traffic into Euroscope using the Opensky Network
-![Showcase](https://github.com/adam-p/markdown-here/raw/master/src/common/ima)
+![Showcase](https://github.com/aap007freak/OpenSkyToEuroscope/blob/master/images/showcase.PNG)
 ## Installation and usage
 (It is assumed you already have Euroscope and the correct sector files installed for the area you want to display IRL traffic)
 1. Clone or download this repo.
@@ -10,7 +10,7 @@
     *   Server = 127.0.0.1 (It is not in the dropdown menu, but you can just type in the box)
     *   Uncheck the "connect to VATSIM"-checkbox
     *   Since you're not actually connecting to VATSIM, the other fields (e.g. certificate and password)  don't matter
-    ![Connection settings](https://github.com/adam-p/markdown-here/raw/master/src/common/ima)
+    ![Connection settings](https://github.com/aap007freak/OpenSkyToEuroscope/blob/master/images/connectionsettings.PNG)
 
 5. Click connect. It might take up to 30 seconds for aircraft to load in.
 6. Please note that aircraft positions are only updated every 10 seconds.
