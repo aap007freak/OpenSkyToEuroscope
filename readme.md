@@ -16,14 +16,14 @@
 6. Please note that aircraft positions are only updated every 10 seconds.
 
 ## How it works
-The [Opensky Network](https://opensky-network.org/) is a non-profit community-based receiver network which has been continuously collecting air traffic surveillance data since 2013. It has a free-to-use API from which users can extract flight data. 
-To gather the data was easy, to put that data into Euroscope was *a lot* harder. At first, the only possible way seemed to use [SBS2FSDproxy](https://adsbradar.ru/sbstofsdproxy-adsb), an outdated and sketchy proxy server that converted SBS data into the FSD format, which is the format VATSIM and IVAO use. After looking at the source code, I figured that it was way easier to just build a FSD server myself. 
+The [Opensky Network](https://opensky-network.org/) is a non-profit community-based receiver network which has been continuously collecting air traffic surveillance data since 2013. It has a free-to-use API from which users can extract flight data.
+To gather the data was easy, to put that data into Euroscope was *a lot* harder. At first, the only possible way seemed to use [SBS2FSDproxy](https://adsbradar.ru/sbstofsdproxy-adsb), an outdated and sketchy proxy server that converted SBS data into the FSD format, which is the format VATSIM and IVAO use. After looking at the source code, I figured that it was way easier to just build a FSD server myself.
 Using [unofficial documentation](https://studentweb.uvic.ca/~norrisng/fsd-doc/intro/overview/) for the FSD protocol and scenario files (which are essentially already in FSD format) and after testing I figured that to display aircraft in Euroscope, you only need 1 line of FSD.
 To add flightplans, you need other lines, but since the Opensky API doesn't have route information, this can't be implemented anyway. In the future it might be possible to link the script with other API's (like flightradar24 or Eurocontrol), to get accurate route information.
 
 ## Building from source
 The program is written in `Python 3.8.5`.
-If you want to edit/extend the source code, you'll have to add the Opensky API via pip. Execute the command `pip install -e OpenSkyToEuroscope/opensky-api/python`. (More info [here](https://github.com/openskynetwork/opensky-api)).
+If you want to edit/extend the source code, you'll have to add the Opensky API via pip. Execute the command `pip install -e lib/opensky-api/python`. (More info [here](https://github.com/openskynetwork/opensky-api)).
 
 ## Credits
  * The Opensky team and contributors.
@@ -32,4 +32,3 @@ If you want to edit/extend the source code, you'll have to add the Opensky API v
  * Norris Ng for the [FSD documentation](https://github.com/norrisng/fsd-doc).
 
  * The guys over at ADSBradar.ru. They still host the SBS2FSDProxy code, which made decompiling a lot easier.
-

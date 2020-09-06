@@ -1,4 +1,3 @@
-
 import time
 import requests
 import socket as s
@@ -60,7 +59,7 @@ while 1:
                 time.sleep(10)
             except Timeout:
                 print("Read timeout occured, waiting 10 seconds")
-                #to prevent weird speed issues when the update times out, we
+                #to prevent weird speed issues when the update times out, we should probably interpolate some position later down the road...
                 update_euroscope(state_list)
                 time.sleep(10)
     except ConnectionAbortedError:
