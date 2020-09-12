@@ -33,36 +33,40 @@ def update_euroscope(state_list, seconds):
         for state in state_list.states:
             position_update_string = convert_to_fsd(state)
             connection.sendall(str.encode(position_update_string))
-			time.sleep((1/len(state_list.states) * seconds)
-			
+            time.sleep((1/len(state_list.states) * seconds))
+
 #this function is called when we want to update euroscope WITHOUT having received an update from opensky
 #we need to interpolate the position of the aircraft.
-def interpolate_euroscope(state_list, seconds):
-	if state_list:
-		for state in state_list.states:
-			#We assume that the globe is a 2D object (#flatearthgang), lat long is the x y of the aircraft
-			#for small areas, this shouldn't be a problem
-			#Working in radians
-			rlat = state.latitude / 180 * math.pi
-			rlong = state.longitude / 180 * math.pi
-			rheading = state.heading / 180 * math.pi
-			speed_in_knots = state.velocity * 1.94384449 #converting from m/s to knots
+def interpolate_euroscope(state_list, history, seconds):
+    if state_list and history: ##nullpointers
+        for state in state_list.states:
+            #last_state = next(x for x in history.states if x.callsign == state.callsign)
+            #We assume that the globe is a 2D object (#flatearthgang), lat long is the x y of the aircraft
+            #for small areas, this shouldn't be a problem
+            #Working in radians
+            rlat = state.latitude / 180 * math.pi
+            rlong = state.longitude / 180 * math.pi
+            rheading = state.heading / 180 * math.pi
+            speed_in_knots = state.velocity * 1.94384449 #converting from m/s to knots
 
-			#knots is minutes of latitude per hour
-			#we divide by 60 three times to get degrees of latitude per second
-			#then we convert to radian and multiply time to get distance
-			dist = speed_in_knots / 60 / 60 / 60 / 180 * math.pi * seconds
-			#some trigonometrics
-			new_rlat = rlat + dist * math.cos(rheading)
-			new_rlong = rlong + dist * math.sin(rheading)
+            #knots is minutes of latitude per hour
+            #we divide by 60 three times to get degrees of latitude per second
+            #then we convert to radian and multiply time to get distance
+            dist = speed_in_knots / 60 / 60 / 60 / 180 * math.pi * seconds
+            #some trigonometrics
+            new_rlat = rlat + dist * math.cos(rheading)
+            new_rlong = rlong + dist * math.sin(rheading)
 
-			state.latitude = new_rlat / math.pi * 180
-			state.longitude = new_rlong / math.pi * 180
-			
-			position_update_string = convert_to_fsd(state)
-			connection.sendall(str.encode(position_update_string))
-			time.sleep((1/len(state_list.states) * seconds)			
-			
+            state.latitude = new_rlat / math.pi * 180
+            state.longitude = new_rlong / math.pi * 180
+
+            #this was here in the original SBS2fSD program, I have know idea why
+            #state.heading = ((state.heading * 2.88 + 0.5) * 4)
+
+            position_update_string = convert_to_fsd(state)
+            connection.sendall(str.encode(position_update_string))
+            time.sleep((1/len(state_list.states) * seconds))
+
 #load config file
 with open("config.cfg", "r") as cfg:
     bounds = list([ float(line) for line in cfg])
@@ -78,25 +82,27 @@ socket.bind(adress)
 socket.listen(1) # the socket only accepts 1 client (Euroscope)
 
 while 1:
-	print('Waiting for Euroscope.')
-	connection, client_address = socket.accept()
-	print('Connected to Euroscope', connection, client_address)
-	state_list = []
-	try:
-		while(1):
-			try:
-				state_list = api.get_states(bbox=bounds)
-				update_euroscope(state_list)
-				time.sleep(5)
-				interpolate_euroscope(state_list, 5)
-				time.sleep(5)
-			except Timeout:
-				print("Read timeout occured, waiting 10 seconds")
-				interpolate_euroscope(state_list, 5)
-				time.sleep(5)
-				interpolate_euroscope(state_list, 5)
-				time.sleep(5)
-	except ConnectionAbortedError:
-		print("The connection closed. Restart to continue.")
-	finally:
-		connection.close()
+    print('Waiting for Euroscope.')
+    connection, client_address = socket.accept()
+    print('Connected to Euroscope', connection, client_address)
+    state_list = []
+    history = []
+    try:
+        while(1):
+            try:
+                history = state_list
+                state_list = api.get_states(bbox=bounds)
+                print("updating")
+                update_euroscope(state_list, 5)
+                print("interpolating")
+                interpolate_euroscope(state_list, history, 5)
+            except Timeout:
+                print("Read timeout occured, waiting 10 seconds")
+                print("interpolating")
+                interpolate_euroscope(state_list, history, 5)
+                print("interpolating")
+                interpolate_euroscope(state_list, history, 5)
+            except ConnectionAbortedError:
+                print("The connection closed. Restart to continue.")
+    finally:
+        connection.close()

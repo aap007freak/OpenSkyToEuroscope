@@ -1,12 +1,12 @@
 Wandelingen
 	Waterval, nice 8.45km https://www.routeyou.com/nl-be/route/view/1215159/wandelroute/longfaye-een-waterval-en-een-canyon
 	Waterval en Botrange 16,3km https://www.routeyou.com/nl-be/route/view/4565589/recreatieve-wandelroute/rondje-in-het-mooiste-van-de-hoge-venen
-	
+
 	Het kot heeft me erg bevallen. Ik dat u in vakantie gaat
-	
-	
-	
-	
+
+
+
+
 	try:
 				states = api.get_states(bbox=(45.8389, 47.8229, 5.9962, 10.5226))
 				for state in states.states:
@@ -18,14 +18,14 @@ Wandelingen
 					print(to_encode)
 					connection.sendall(str.encode(to_encode))
 				print('done')
-				time.sleep(11)        
+				time.sleep(11)
 			except requests.exceptions.Timeout:
 				print("Read timeout occurred, waiting a little")
 				time.sleep(40)
-				
+
 				// simulate movemenmt if older than 15 sec
-				
-				
+
+
         if ( seconds > 15 )
         {
             // get values
@@ -40,10 +40,10 @@ Wandelingen
 
             // convert back
             acpos.LoadFromScreenCoord ( x, y ) ;
-			
-			
-			
-			
+
+
+
+
 			str.Format ( "@%c:%s:%s:1:%.5f:%.5f:%d:%d:%d:0\r\n",
                      seconds < 5 ? 'Y' : 'N',       // SqIdent ? 'Y' : SqNormal ? 'N' : 'S',
                      callsign,
@@ -52,6 +52,10 @@ Wandelingen
                      acpos.m_Lon,
                      p_data -> m_Altitude,
                      p_data -> m_GroundSpeed,
-                     ((int) ( p_data -> m_Heading * 2.88 + 0.5 )) << 2 ) ;
+                     (
+					 	(int) (
+							p_data -> m_Heading * 2.88 + 0.5 )
+						) << 2
+					 );
         SendMessageToAllExcept ( str, "" ) ;
         }
