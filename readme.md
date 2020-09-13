@@ -25,6 +25,9 @@ To add flightplans, you need other lines, but since the Opensky API doesn't have
 The program is written in `Python 3.8.5`.
 If you want to edit/extend the source code, you'll have to add the Opensky API via pip. Execute the command `pip install -e lib/opensky-api/python`. (More info [here](https://github.com/openskynetwork/opensky-api)).
 
+## Issues
+Euroscope expects position updates every 5 seconds, but Opensky only updates every 10 seconds. To circumvent this I tried to extrapolate a position after 5 seconds based on speed and heading. The headings aren't 100% accurate though, so it extrapolated the positions a bit off course, which caused a wobbly effect on all planes. If anyone experienced in this type of stuff knows why it does that or how to fix it, please let me now / submit a pull request.
+
 ## Credits
  * The Opensky team and contributors.
  * Gergely Csernak and contributors for Euroscope.

@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['sky.py'],
-             pathex=['C:\\Users\\Anton\\Desktop\\Python\\OpenSkyToEuroscope\\python'],
+             pathex=['C:\\Users\\Anton\\Desktop\\OpenSkyToEuroscope\\src\\python'],
              binaries=[],
              datas=[],
              hiddenimports=[],
