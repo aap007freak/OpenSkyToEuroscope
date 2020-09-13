@@ -36,6 +36,39 @@ def update_euroscope(state_list, seconds):
             time_to_sleep = 1 / len(state_list.states) * seconds
             time.sleep(time_to_sleep)
 
+#this function is called when we want to update euroscope WITHOUT having received an update from opensky
+#we need to interpolate the position of the aircraft.
+def interpolate_euroscope(state_list, history, seconds):
+    if state_list: ##nullpointers
+        for state in state_list.states:
+            #last_state = next(x for x in history.states if x.callsign == state.callsign)
+            #We assume that the globe is a 2D object (#flatearthgang), lat long is the x y of the aircraft
+            #for small areas, this shouldn't be a problem
+            #Working in radians
+            rlat = state.latitude / 180 * math.pi
+            rlong = state.longitude / 180 * math.pi
+            rheading = state.heading / 180 * math.pi
+            speed_in_knots = state.velocity * 1.94384449 #converting from m/s to knots
+
+            #knots is minutes of latitude per hour
+            #we divide by 60 three times to get degrees of latitude per second
+            #then we convert to radian and multiply time to get distance
+            dist = speed_in_knots / 60 / 60 / 60 / 180 * math.pi * seconds
+            #some trigonometrics
+            new_rlat = rlat + dist * math.cos(rheading)
+            new_rlong = rlong + dist * math.sin(rheading)
+
+            state.latitude = new_rlat / math.pi * 180
+            state.longitude = new_rlong / math.pi * 180
+
+            #this was here in the original SBS2fSD program, I have know idea why
+            #state.heading = ((state.heading * 2.88 + 0.5) * 4)
+
+            position_update_string = convert_to_fsd(state)
+            connection.sendall(str.encode(position_update_string))
+
+            time_to_sleep = 1 / len(state_list.states) * seconds
+            time.sleep(time_to_sleep)
 #load config file
 with open("config.cfg", "r") as cfg:
     bounds = list([ float(line) for line in cfg])
@@ -71,39 +104,7 @@ while 1:
         connection.close()
 
 
-#this function is called when we want to update euroscope WITHOUT having received an update from opensky
-#we need to interpolate the position of the aircraft.
-def interpolate_euroscope(state_list, history, seconds):
-    if state_list: ##nullpointers
-        for state in state_list.states:
-            #last_state = next(x for x in history.states if x.callsign == state.callsign)
-            #We assume that the globe is a 2D object (#flatearthgang), lat long is the x y of the aircraft
-            #for small areas, this shouldn't be a problem
-            #Working in radians
-            rlat = state.latitude / 180 * math.pi
-            rlong = state.longitude / 180 * math.pi
-            rheading = state.heading / 180 * math.pi
-            speed_in_knots = state.velocity * 1.94384449 #converting from m/s to knots
 
-            #knots is minutes of latitude per hour
-            #we divide by 60 three times to get degrees of latitude per second
-            #then we convert to radian and multiply time to get distance
-            dist = speed_in_knots / 60 / 60 / 60 / 180 * math.pi * seconds
-            #some trigonometrics
-            new_rlat = rlat + dist * math.cos(rheading)
-            new_rlong = rlong + dist * math.sin(rheading)
-
-            state.latitude = new_rlat / math.pi * 180
-            state.longitude = new_rlong / math.pi * 180
-
-            #this was here in the original SBS2fSD program, I have know idea why
-            #state.heading = ((state.heading * 2.88 + 0.5) * 4)
-
-            position_update_string = convert_to_fsd(state)
-            connection.sendall(str.encode(position_update_string))
-
-            time_to_sleep = 1 / len(state_list.states) * seconds
-            time.sleep(time_to_sleep)
 
 #this function is called when we want to update euroscope WITHOUT having received an update from opensky
 #we need to interpolate the position of the aircraft.
