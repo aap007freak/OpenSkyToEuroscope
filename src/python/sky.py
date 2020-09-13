@@ -69,6 +69,7 @@ def interpolate_euroscope(state_list, history, seconds):
 
             time_to_sleep = 1 / len(state_list.states) * seconds
             time.sleep(time_to_sleep)
+            
 #load config file
 with open("config.cfg", "r") as cfg:
     bounds = list([ float(line) for line in cfg])
