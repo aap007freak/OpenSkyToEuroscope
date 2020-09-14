@@ -8,7 +8,7 @@ from requests.exceptions import Timeout  # this handles ReadTimeout or ConnectTi
 
 def convert_to_fsd(state):
     #according to euroscope scenario file docs + unofficial fsd protocol docs
-    base_string = "@{transponder}:{callsign}:{squawk}:1:{lat}:{long}:{alt}:0:{heading}:0\n"
+    base_string = "@{transponder}:{callsign}:{squawk}:1:{lat}:{long}:{alt}:{groundspeed}:{heading}:0\n"
 
     #alter some variables
     altitude_in_feet = 0
@@ -18,13 +18,19 @@ def convert_to_fsd(state):
     transponder_mode = "N"
     if(state.on_ground):
         transponder_mode = "S"
+    if (state.spi):
+        transponder_mode = "Y"
+
+    squawk = state.squawk
+    if squawk is None:
+        squawk = "0000"
 
     #compose the final string
     return base_string.format(
         transponder=transponder_mode,
-        callsign=state.callsign, squawk=state.squawk,
+        callsign=state.callsign, squawk=squawk,
         lat=state.latitude, long=state.longitude,
-        alt=round(altitude_in_feet), heading=state.heading)
+        alt=round(altitude_in_feet), heading=int(state.heading), groundspeed=int(state.velocity*1.94384))
 
 #this function is called when we get an update from opensky and we want to update euroscope
 def update_euroscope(state_list, seconds):
