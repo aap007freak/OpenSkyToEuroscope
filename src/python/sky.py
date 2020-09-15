@@ -36,15 +36,17 @@ def convert_to_fsd(state):
 def update_euroscope(state_list, seconds):
     if state_list:
         for i in range(len(state_list.states)):
-            position_update_string = convert_to_fsd(state_list.states[i])
-            connection.sendall(str.encode(position_update_string))
-
-            time_to_sleep = 1 / len(state_list.states) * seconds
-            time.sleep(time_to_sleep)
+            try:
+                position_update_string = convert_to_fsd(state_list.states[i])
+                connection.sendall(str.encode(position_update_string))
+                time_to_sleep = 1 / len(state_list.states) * seconds
+                time.sleep(time_to_sleep)
+            except TypeError:
+                continue
 
 #this function is called when we want to update euroscope WITHOUT having received an update from opensky
 #we need to interpolate the position of the aircraft.
-def interpolate_euroscope(state_list, history, seconds):
+def interpolate_euroscope(state_list, seconds):
     if state_list: ##nullpointers
         for state in state_list.states:
             #last_state = next(x for x in history.states if x.callsign == state.callsign)
@@ -75,7 +77,7 @@ def interpolate_euroscope(state_list, history, seconds):
 
             time_to_sleep = 1 / len(state_list.states) * seconds
             time.sleep(time_to_sleep)
-            
+
 #load config file
 with open("config.cfg", "r") as cfg:
     bounds = list([ float(line) for line in cfg])
@@ -95,7 +97,6 @@ while 1:
     connection, client_address = socket.accept()
     print('Connected to Euroscope', connection, client_address)
     state_list = [] #always the most recent data
-    history = [] #data from 10 seconds ago
     try:
         while(1):
             try:
@@ -104,7 +105,7 @@ while 1:
                 update_euroscope(state_list, 10)
             except Timeout:
                 print("Read timeout occured, interpolating data")
-                interpolate_euroscope(state_list, history, 10) # creates problems with headings I can't figure out
+                interpolate_euroscope(state_list, 10) # creates problems with headings I can't figure out
     except ConnectionAbortedError:
         print("The connection closed. Restart to continue.")
     finally:
@@ -112,6 +113,7 @@ while 1:
 
 
 
+##TEMPORARILY NOT WORKING
 
 #this function is called when we want to update euroscope WITHOUT having received an update from opensky
 #we need to interpolate the position of the aircraft.
